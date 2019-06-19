@@ -3,6 +3,7 @@ import './App.css';
 import MapContainer from './components/MapContainer';
 import Spinner from './components/Spinner';
 import UsersDrawer from './components/UsersDrawer';
+import SignIn from './components/SignIn';
 
 class App extends Component {
 
@@ -11,12 +12,17 @@ class App extends Component {
     loading: true,
     selectedUser: 'ALL',
     db: {},
-    liveTrack: false
+    liveTrack: false,
+    auth: false
   }
 
   componentDidMount() {
     document.title = "Authorities Portal"
     this.fetchAll();
+  }
+
+  authHandler = () => {
+    this.setState({ auth: true });
   }
 
   liveLocationHandler = (value) => {
@@ -75,18 +81,29 @@ class App extends Component {
   render() {
     return (
       <div className="App" >
-        <UsersDrawer
-          liveLocationHandler={this.liveLocationHandler}
-          selectedUserHandler={this.selectedUserHandler}
-          refreshHandler={this.fetchAll}
-          users={this.state.db.Users} />
 
         {
+          !this.state.auth &&
+          < SignIn authHandler={this.authHandler} />
+        }
+
+        {
+          this.state.auth &&
+          <UsersDrawer
+            liveLocationHandler={this.liveLocationHandler}
+            selectedUserHandler={this.selectedUserHandler}
+            refreshHandler={this.fetchAll}
+            users={this.state.db.Users} />
+        }
+
+        {
+          this.state.auth &&
           this.state.loading &&
           <Spinner />
         }
 
         {
+          this.state.auth &&
           !this.state.loading
           &&
           <MapContainer
