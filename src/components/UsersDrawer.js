@@ -20,6 +20,8 @@ import StarRate from '@material-ui/icons/StarRate'
 import CloudUploadIcon from '@material-ui/icons/CloudUpload'
 import Button from '@material-ui/core/Button';
 
+import Switch from './LastLocationSwitch';
+
 const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => ({
@@ -156,6 +158,9 @@ export default function UsersDrawer(props) {
                     <Typography variant="h6" noWrap>
                         Relevium Authoritative Portal
           </Typography>
+
+
+                    <Switch liveLocationHandler={props.liveLocationHandler} />
                     <Button
                         onClick={props.refreshHandler}
                         variant="contained"

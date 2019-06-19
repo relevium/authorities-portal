@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import MapContainer from './components/MapContainer';
-import { Spinner } from 'reactstrap';
+import Spinner from './components/Spinner';
 import UsersDrawer from './components/UsersDrawer';
 
 class App extends Component {
@@ -10,12 +10,17 @@ class App extends Component {
   state = {
     loading: true,
     selectedUser: 'ALL',
-    db: {}
+    db: {},
+    liveTrack: false
   }
 
   componentDidMount() {
     document.title = "Authorities Portal"
     this.fetchAll();
+  }
+
+  liveLocationHandler = (value) => {
+    this.setState({ liveTrack: value });
   }
 
   selectedUserHandler = (userID) => {
@@ -71,19 +76,21 @@ class App extends Component {
     return (
       <div className="App" >
         <UsersDrawer
+          liveLocationHandler={this.liveLocationHandler}
           selectedUserHandler={this.selectedUserHandler}
           refreshHandler={this.fetchAll}
           users={this.state.db.Users} />
 
         {
           this.state.loading &&
-          <Spinner style={{ width: '3rem', height: '3rem' }} />
+          <Spinner />
         }
 
         {
           !this.state.loading
           &&
           <MapContainer
+            liveTrack={this.state.liveTrack}
             db={this.state.db}
             userID={this.state.selectedUser}
             mapCenter={{ lat: 31.309954, lng: 30.065655 }} />

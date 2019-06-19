@@ -25,10 +25,10 @@ class MapContainer extends Component {
     };
 
 
-    safeGetFirstName = (val) => {
+    safeGetAttribute = (object, attrib) => {
 
         try {
-            return val['mFirstName']
+            return object[attrib];
         }
         catch
         {
@@ -36,8 +36,19 @@ class MapContainer extends Component {
         }
     }
 
+    safeGetDateTime = (object) => {
 
-    drawMarks = () => { // optimize more
+        try {
+            return object['userState']['date'] + ' ' + object['userState']['time'];
+        }
+        catch
+        {
+            return 'Unknown Time'
+        }
+    }
+
+
+    drawALLMarkers = () => { // optimize more
         let res = [];
         for (var markID in this.props.db.GeoFirePingLocations) {
             let mark = this.props.db.GeoFirePingLocations[markID];
@@ -46,7 +57,23 @@ class MapContainer extends Component {
                     <Marker
                         key={markID}
                         position={{ lat: mark.l[0], lng: mark.l[1] }}
-                        title={'This mark was added by ' + this.safeGetFirstName(this.props.db.Users[mark.mUserID])}
+                        title={'This mark was added by ' + this.safeGetAttribute(this.props.db.Users[mark.mUserID], 'mFirstName')}
+                        onClick={this.onMarkerClick}
+                    />)
+        }
+        return res;
+    }
+
+    drawLiveMarkers = () => {
+        let res = [];
+        for (var currentUserID in this.props.db.Users) {
+            let mark = this.props.db.Users[currentUserID];
+            if (currentUserID === this.props.userID || this.props.userID === 'ALL')
+                res.push(
+                    <Marker
+                        key={currentUserID}
+                        position={{ lat: mark.l[0], lng: mark.l[1] }}
+                        title={'Last recorded Location of ' + this.safeGetAttribute(mark, 'mFirstName') + ' ' + this.safeGetDateTime(mark)}
                         onClick={this.onMarkerClick}
                     />)
         }
@@ -69,8 +96,16 @@ class MapContainer extends Component {
                     zoom={14}>
 
                     {
-                        this.drawMarks()
+                        !this.props.liveTrack
+                        && this.drawALLMarkers()
                     }
+
+                    {
+                        this.props.liveTrack
+                        && this.drawLiveMarkers()
+                    }
+
+
 
                     <InfoWindow
                         marker={this.state.activeMarker}
