@@ -1,4 +1,8 @@
 # Authoritaties Portal
+
+[![Build Status](https://travis-ci.org/relevium/authorities-portal.svg?branch=master)](https://travis-ci.org/relevium/AndroidAPP)
+
+
 ![screenshot](./screenshot.png)
 
 ---
