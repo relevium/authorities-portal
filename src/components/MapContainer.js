@@ -53,7 +53,6 @@ class MapContainer extends Component {
         let res = [];
         for (var markID in this.props.db.GeoFirePingLocations) {
             let mark = this.props.db.GeoFirePingLocations[markID];
-            console.log(mark);
             if (mark.mUserID === this.props.userID || this.props.userID === 'ALL')
                 res.push(
                     <Marker
@@ -83,21 +82,30 @@ class MapContainer extends Component {
     }
 
 
-    mapClicked = (mapProps, map, clickEvent) => {
+    mapClicked = async (mapProps, map, clickEvent) => {
 
         const lat = clickEvent.latLng.lat();
         const lng = clickEvent.latLng.lng();
 
-        const data = { l: [lat, lng], mDescription: 'Shelter' };
+        const dataPos = { l: [lat, lng] };
+        const dataDesc = { mDescription: 'Shelter', mImageId: 2, mUserID: 'authority' };
 
-        fetch(`https://${process.env.REACT_APP_DATABASE_URL}/Shelters.json?auth=${process.env.REACT_APP_DATABASE_KEY}`,
+
+        const r1 = await fetch(`https://${process.env.REACT_APP_DATABASE_URL}/GeoFirePingLocations.json?auth=${process.env.REACT_APP_DATABASE_KEY}`,
             {
                 method: 'POST',
-                body: JSON.stringify(data)
+                body: JSON.stringify(dataPos)
             })
-            .then(res => res.json())
-            .then(res => console.log(res))
-            .then(this.props.refreshHandler());
+
+        const entryID = await r1.json();
+
+        await fetch(`https://${process.env.REACT_APP_DATABASE_URL}/Ping-Details/${entryID.name}.json?auth=${process.env.REACT_APP_DATABASE_KEY}`,
+            {
+                method: 'PUT',
+                body: JSON.stringify(dataDesc)
+            })
+
+        this.props.refreshHandler();
 
     }
 
