@@ -2,6 +2,9 @@
 
 [![Build Status](https://travis-ci.org/relevium/authorities-portal.svg?branch=master)](https://travis-ci.org/relevium/AndroidAPP)
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/9a6b860d-d1b9-41d7-9ffb-7049068226de/deploy-status)](https://app.netlify.com/sites/stupefied-stallman-dd0502/deploys)
+
+
 
 ![screenshot](./screenshot.png)
 
