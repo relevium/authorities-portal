@@ -35,14 +35,14 @@ class App extends Component {
 
   fetchAll = () => {
     console.log('start fetching');
-    const collections = ['GeoFirePingLocations', 'Ping-Details', 'Users', 'User-Location'];
+    const collections = ['GeoFirePingLocations', 'Ping-Details', 'Users', 'User-Location', 'Shelters'];
 
     Promise.all(collections.map(collection => fetch(`https://${process.env.REACT_APP_DATABASE_URL}/${collection}.json?auth=${process.env.REACT_APP_DATABASE_KEY}`)))
       .then(responses => Promise.all(responses.map(r => r.json())))
       .then(data => this.setState(
         {
           db: {
-            'GeoFirePingLocations': this.mergeLeft(data[0], data[1]),
+            'GeoFirePingLocations': { ...this.mergeLeft(data[0], data[1]), ...data[4] },
             'Users': this.mergeLeft(data[2], data[3])
           },
           loading: false
@@ -107,6 +107,7 @@ class App extends Component {
           !this.state.loading
           &&
           <MapContainer
+            refreshHandler={this.fetchAll}
             liveTrack={this.state.liveTrack}
             db={this.state.db}
             userID={this.state.selectedUser}

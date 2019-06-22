@@ -32,7 +32,8 @@ class MapContainer extends Component {
         }
         catch
         {
-            return 'Unknown User'
+            // return 'Unknown User'
+            return 'Authoritaties (SHELTER)';
         }
     }
 
@@ -52,6 +53,7 @@ class MapContainer extends Component {
         let res = [];
         for (var markID in this.props.db.GeoFirePingLocations) {
             let mark = this.props.db.GeoFirePingLocations[markID];
+            console.log(mark);
             if (mark.mUserID === this.props.userID || this.props.userID === 'ALL')
                 res.push(
                     <Marker
@@ -80,6 +82,25 @@ class MapContainer extends Component {
         return res;
     }
 
+
+    mapClicked = (mapProps, map, clickEvent) => {
+
+        const lat = clickEvent.latLng.lat();
+        const lng = clickEvent.latLng.lng();
+
+        const data = { l: [lat, lng], mDescription: 'Shelter' };
+
+        fetch(`https://${process.env.REACT_APP_DATABASE_URL}/Shelters.json?auth=${process.env.REACT_APP_DATABASE_KEY}`,
+            {
+                method: 'POST',
+                body: JSON.stringify(data)
+            })
+            .then(res => res.json())
+            .then(res => console.log(res))
+            .then(this.props.refreshHandler());
+
+    }
+
     render() {
         const style = {
             margin: '5%',
@@ -90,6 +111,8 @@ class MapContainer extends Component {
             <div id="map" style={{ style }}>
                 <Map
                     google={this.props.google}
+                    onRightclick={this.mapClicked}
+
                     style={style}
                     // center={this.props.mapCenter}
                     initialCenter={this.props.mapCenter}
