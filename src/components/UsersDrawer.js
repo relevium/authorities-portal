@@ -113,6 +113,16 @@ export default function UsersDrawer(props) {
         }
     }
 
+    const safeGetStatus = (val) => {
+        try {
+            return val['userState']['state']
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
 
     const listItemClickHandler = (event) => {
         const userID = event.currentTarget.dataset.id;
@@ -124,10 +134,12 @@ export default function UsersDrawer(props) {
     const listUsers = () => {
         var res = [];
         for (var userID in props.users) {
+            const userFirstName = safeGetFirstName(props.users[userID]);
+            const userOnlineIcon = safeGetStatus(props.users[userID]) === "online" ? '🔵' : '🔴';
             res.push((
                 <ListItem button key={userID} data-id={userID} onClick={listItemClickHandler}>
                     <ListItemIcon>{<AccountIcon />}</ListItemIcon>
-                    <ListItemText primary={safeGetFirstName(props.users[userID])} />
+                    <ListItemText primary={userFirstName + userOnlineIcon} />
                 </ListItem>))
         }
         return res;
